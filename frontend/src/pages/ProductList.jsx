@@ -7,7 +7,7 @@ export default function ProductList() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/product/getAllProducts');
+        const response = await axios.get('https://sowmya-app-backend.onrender.com/product/getAllProducts');
         setProducts(response.data.products);
       } catch (error) {
         console.error('Error fetching products:', error);

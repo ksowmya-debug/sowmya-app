@@ -32,7 +32,7 @@ export default function Home() {
   // Function to fetch products
   const GetProducts = async () => {
     try {
-      let url = 'http://localhost:3000/product/getAllProducts';
+      let url = 'https://sowmya-app-backend.onrender.com/product/getAllProducts';
       const response = await axios.get(url);
       const data = response.data;
       setProducts(data.products);

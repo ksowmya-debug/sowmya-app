@@ -21,7 +21,7 @@ export default function Dashboard() {
         const fetchCart = async () => {
             if (!Auth) return;
             try {
-                const res = await fetch(`http://localhost:3000/cart/${Auth._id}`);
+                const res = await fetch(`https://sowmya-app-backend.onrender.com/cart/${Auth._id}`);
                 const data = await res.json();
                 if (res.ok) {
                     dispatch(setCart(data));
@@ -38,7 +38,7 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchSalesData = async () => {
             try {
-                const res = await fetch('http://localhost:3000/order/sales-data');
+                const res = await fetch('https://sowmya-app-backend.onrender.com/order/sales-data');
                 const data = await res.json();
                 if (res.ok) {
                     setSalesData(data.salesData);

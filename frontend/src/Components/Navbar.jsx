@@ -22,6 +22,7 @@ export default function Navbar({ onAddProductClick }) {
     <div className="flex gap-4 ml-4">
         <Link to="/" className="btn btn-ghost text-lg hover:bg-orange-600">Home</Link>
         <Link to="/about" className="btn btn-ghost text-lg hover:bg-orange-600">About</Link>
+        
         <Link to="/dashboard" className="btn btn-ghost text-lg hover:bg-orange-600">Dashboard</Link>
         {Auth && Auth.isAdmin && <Link to="/users" className="btn btn-ghost text-lg hover:bg-orange-600">Users</Link>}
         <Link to="/products" className="btn btn-ghost text-lg hover:bg-orange-600">Products</Link>

@@ -14,7 +14,7 @@ export default function UserManagement() {
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/user/getAllUsers');
+            const response = await axios.get('https://sowmya-app-backend.onrender.com/user/getAllUsers');
             if (response.data.success) {
                 setUsers(response.data.users);
             } else {
@@ -29,7 +29,7 @@ export default function UserManagement() {
     const handleDelete = async (userId) => {
         if (window.confirm('Are you sure you want to delete this user?')) {
             try {
-                const response = await axios.delete(`http://localhost:3000/users/delete/${userId}`);
+                const response = await axios.delete(`https://sowmya-app-backend.onrender.com/users/delete/${userId}`);
                 if (response.data.success) {
                     toast.success(response.data.msg);
                     fetchUsers(); // Refresh the list

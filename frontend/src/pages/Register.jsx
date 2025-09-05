@@ -21,7 +21,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/auth/register', value);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, value);
       const data = response.data;
       console.log(data);
 

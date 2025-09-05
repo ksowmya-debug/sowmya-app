@@ -12,7 +12,7 @@ export default function About() {
 
       <div className='bg-white p-8 rounded-lg shadow-lg flex flex-col items-center'>
         <img
-          src="/images/OIP.jpeg" // Placeholder image
+          src="/images/product10.png" // Placeholder image
           alt="Owner"
           className="w-48 h-48 rounded-full object-cover mb-6 border-4 border-blue-500"
         />

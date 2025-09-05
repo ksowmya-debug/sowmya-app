@@ -17,7 +17,7 @@ export default function Card({ product, onEditClick }) {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:3000/cart/${Auth._id}`, {
+      const res = await fetch(`https://sowmya-app-backend.onrender.com/cart/${Auth._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export default function Card({ product, onEditClick }) {
         <Link to={`/product/${product._id}`}>
           <figure className="border-2 border-gray-300 rounded-lg overflow-hidden">
             <img
-              src={product.imageUrl}
+              src={`${import.meta.env.VITE_BACKEND_URL}${product.imageUrl}`}
               alt={product.name}
               className="transition-transform duration-300 ease-in-out hover:scale-105 w-full h-72 object-cover" />
           </figure>

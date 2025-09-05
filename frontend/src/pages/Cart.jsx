@@ -12,7 +12,7 @@ export default function Cart() {
         const fetchCart = async () => {
             if (!Auth) return;
             try {
-                const res = await fetch(`http://localhost:3000/cart/${Auth._id}`);
+                const res = await fetch(`https://sowmya-app-backend.onrender.com/cart/${Auth._id}`);
                 const data = await res.json();
                 if (res.ok) {
                     dispatch(setCart({ items: data.items }));
@@ -30,7 +30,7 @@ export default function Cart() {
     const handleRemoveFromCart = async (productId) => {
         if (!Auth) return;
         try {
-            const res = await fetch(`http://localhost:3000/cart/${Auth._id}/${productId}`, {
+            const res = await fetch(`https://sowmya-app-backend.onrender.com/cart/${Auth._id}/${productId}`, {
                 method: 'DELETE',
             });
             if (res.ok) {
@@ -49,7 +49,7 @@ export default function Cart() {
     const handleUpdateCart = async (productId, quantity) => {
         if (!Auth) return;
         try {
-            const res = await fetch(`http://localhost:3000/cart/${Auth._id}`,
+            const res = await fetch(`https://sowmya-app-backend.onrender.com/cart/${Auth._id}`,
                 {
                     method: 'PUT',
                     headers: {
@@ -81,7 +81,7 @@ export default function Cart() {
             return;
         }
         try {
-            const res = await fetch(`http://localhost:3000/order/checkout/${Auth._id}`, {
+            const res = await fetch(`https://sowmya-app-backend.onrender.com/order/checkout/${Auth._id}`, {
                 method: 'POST',
             });
             const data = await res.json();

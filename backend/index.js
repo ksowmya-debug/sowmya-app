@@ -23,7 +23,7 @@ app.use(cors("*")); // Enable CORS for all routes
 app.use(express.json());
 
 // Serve static files from images directory
-app.use("/images", express.static(path.join(__dirname, "..", "images")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use("/auth", AuthRouters);
 app.use("/user", userRouters);

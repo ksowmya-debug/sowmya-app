@@ -22,7 +22,7 @@ const EditUserModal = ({ onClose, onUserUpdated, user }) => {
 
     try {
       const updatedUser = { userName, email, isAdmin };
-      const response = await axios.put(`http://localhost:3000/users/${user._id}`, updatedUser);
+      const response = await axios.put(`https://sowmya-app-backend.onrender.com/users/${user._id}`, updatedUser);
       onUserUpdated(response.data.user); // Assuming the API returns the updated user
       toast.success('User updated successfully!');
       onClose(); // Close modal on success
