@@ -168,12 +168,21 @@ const getProduct = async (req, res) => {
 const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find({}).populate("userId", "userName email");
-    console.log("All products:", products);
+    const baseUrl = req.protocol + '://' + req.get('host'); // Get dynamic base URL
+
+    const productsWithAbsoluteUrls = products.map(product => {
+      return {
+        ...product._doc, // Use _doc to get a plain JavaScript object
+        imageUrl: `${baseUrl}${product.imageUrl}` // Prepend base URL
+      };
+    });
+
+    console.log("All products:", productsWithAbsoluteUrls);
     return res.status(200).json({
       success: true,
       msg: "Products retrieved successfully",
-      count: products.length,
-      products: products,
+      count: productsWithAbsoluteUrls.length,
+      products: productsWithAbsoluteUrls,
     });
   } catch (error) {
     console.log("Error in getAllProducts:", error);
