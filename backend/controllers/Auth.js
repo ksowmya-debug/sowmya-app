@@ -44,7 +44,7 @@ const Login = async (req, res) => {
         .status(400)
         .json({ success: false, msg: "Please fill all the fields" });
     }
-    const FindUser = await User.findOne({ email });
+    const FindUser = await User.findOne({ email: email.toLowerCase() });
     if (!FindUser) {
       return res.status(400).json({ success: false, msg: "User not found" });
     }
