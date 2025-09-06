@@ -3,7 +3,8 @@ import Product from '../models/product.js';
 
 export const getCart = async (req, res) => {
     try {
-        const cart = await Cart.findOne({ user: req.params.userId }).populate('items.product');
+        const cart = await Cart.findOne({ user: req.params.userId });
+        console.log("Raw Cart (before populate):", cart); // Added for debugging
         if (!cart) {
             return res.status(404).json({ msg: 'Cart not found' });
         }
@@ -14,7 +15,6 @@ export const getCart = async (req, res) => {
             ...cart._doc, // Get a plain JavaScript object of the cart
             items: cart.items.map(item => {
                 if (item.product && item.product.imageUrl) {
-                    console.log(`Original imageUrl from DB for product ${item.product.name} in cart:`, item.product.imageUrl); // Added for debugging
                     return {
                         ...item._doc, // Get a plain JavaScript object of the item
                         product: {

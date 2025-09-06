@@ -172,7 +172,6 @@ const getAllProducts = async (req, res) => {
     console.log("Base URL:", baseUrl);
 
     const productsWithAbsoluteUrls = products.map(product => {
-      console.log(`Original imageUrl from DB for ${product.name}:`, product.imageUrl); // Added for debugging
       const absoluteImageUrl = `${baseUrl}${product.imageUrl}`;
       console.log(`Product ${product.name} Image URL:`, absoluteImageUrl);
       return {

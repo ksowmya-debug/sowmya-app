@@ -108,6 +108,7 @@ export default function Cart() {
                         item.product ? (
                             <div key={item.product._id} className="flex items-center justify-between border-b py-4">
                                 <div className="flex items-center">
+                                    {console.log('Image URL in Cart.jsx:', item.product.imageUrl)}
                                     <img src={item.product.imageUrl} alt={item.product.name} className="w-20 h-20 object-cover mr-4" />
                                     <div>
                                         <h2 className="font-bold">{item.product.name}</h2>
