@@ -88,7 +88,7 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="container mx-auto mt-10 p-5 bg-green-100 rounded-lg shadow-lg">
+        <div className="container mx-auto mt-10 p-5 bg-gradient-to-r from-blue-900 to-blue-400 rounded-lg shadow-lg">
             <h1 className="text-3xl font-bold mb-5">Dashboard</h1>
             <h2 className="text-2xl font-bold mb-3">Your Cart Items</h2>
             {items.length === 0 ? (
@@ -96,18 +96,20 @@ export default function Dashboard() {
             ) : (
                 <div>
                     {items.map(item => (
-                        <div key={item.product._id} className="flex items-center justify-between border-b py-4">
-                            <div className="flex items-center">
-                                <img src={item.product.imageUrl} alt={item.product.name} className="w-20 h-20 object-cover mr-4" />
-                                <div>
-                                    <h2 className="font-bold">{item.product.name}</h2>
-                                    <p>{item.product.desc}</p>
+                        item.product ? (
+                            <div key={item.product._id} className="flex items-center justify-between border-b py-4">
+                                <div className="flex items-center">
+                                    <img src={item.product.imageUrl} alt={item.product.name} className="w-20 h-20 object-cover mr-4" />
+                                    <div>
+                                        <h2 className="font-bold">{item.product.name}</h2>
+                                        <p>{item.product.desc}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center">
+                                    <p>Quantity: {item.quantity}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center">
-                                <p>Quantity: {item.quantity}</p>
-                            </div>
-                        </div>
+                        ) : null
                     ))}
                     <div className="mt-5 text-right">
                         <h2 className="text-2xl font-bold">Total Items in Cart: {totalItems}</h2>

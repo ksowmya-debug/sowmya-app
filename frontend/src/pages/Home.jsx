@@ -68,7 +68,7 @@ export default function Home() {
     <>
        <Navbar onAddProductClick={handleOpenModal}/>
     
-      <div className='min-h-screen bg-yellow-600 p-8'>
+      <div className='min-h-screen bg-gradient-to-r from-blue-900 to-blue-400 p-8'>
         <div className='text-center mb-10'>
           <h1 className='text-4xl font-bold text-gray-800'>
             Welcome to our card collection!

@@ -7,7 +7,28 @@ export const getCart = async (req, res) => {
         if (!cart) {
             return res.status(404).json({ msg: 'Cart not found' });
         }
-        res.json(cart);
+
+        const baseUrl = req.protocol + '://' + req.get('host');
+
+        const transformedCart = {
+            ...cart._doc, // Get a plain JavaScript object of the cart
+            items: cart.items.map(item => {
+                if (item.product && item.product.imageUrl) {
+                    console.log(`Original imageUrl from DB for product ${item.product.name} in cart:`, item.product.imageUrl); // Added for debugging
+                    return {
+                        ...item._doc, // Get a plain JavaScript object of the item
+                        product: {
+                            ...item.product._doc, // Get a plain JavaScript object of the populated product
+                            imageUrl: `${baseUrl}${item.product.imageUrl}` // Transform to absolute URL
+                        }
+                    };
+                }
+                return item._doc; // Return original item if product or imageUrl is missing
+            })
+        };
+
+        console.log("Transformed Cart:", transformedCart);
+        res.json(transformedCart);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

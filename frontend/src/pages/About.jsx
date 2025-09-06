@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-blue-100 p-8 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-r from-blue-900 to-blue-400 p-8 flex flex-col items-center justify-center">
       <div className='text-center mb-10'>
         <h1 className='text-4xl font-bold text-gray-800'>
           About the Owner

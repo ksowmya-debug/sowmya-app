@@ -54,7 +54,7 @@ export default function Card({ product, onEditClick }) {
         <Link to={`/product/${product._id}`}>
           <figure className="border-2 border-gray-300 rounded-lg overflow-hidden">
             <img
-              src={`${import.meta.env.VITE_BACKEND_URL}${product.imageUrl}`}
+              src={product.imageUrl}
               alt={product.name}
               className="transition-transform duration-300 ease-in-out hover:scale-105 w-full h-72 object-cover" />
           </figure>

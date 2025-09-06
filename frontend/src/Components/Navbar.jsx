@@ -16,7 +16,7 @@ export default function Navbar({ onAddProductClick }) {
     }
   return (
 <>
-<div className="navbar bg-orange-500 shadow-sm">
+<div className="navbar bg-blue-900 shadow-sm">
   <div className="flex-1">
     <a className="btn btn-ghost text-xl hover:bg-orange-600">SOWMMYA-MALL</a>
     <div className="hidden md:flex gap-4 ml-4"> {/* Hidden on small, flex on medium and up */}

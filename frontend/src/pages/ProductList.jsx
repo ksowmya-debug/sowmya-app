@@ -17,7 +17,7 @@ export default function ProductList() {
   }, []);
 
   return (
-    <div className="container mx-auto mt-10 p-5 bg-yellow-100 rounded-lg shadow-lg">
+    <div className="container mx-auto mt-10 p-5 bg-gradient-to-r from-blue-900 to-blue-400 rounded-lg shadow-lg">
       <h1 className="text-3xl font-bold mb-5">All Products</h1>
       <div className="space-y-4">
         {products.length === 0 ? (
