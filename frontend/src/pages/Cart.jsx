@@ -1,75 +1,12 @@
-import { useEffect } from 'react';
-import { removeFromCart, updateCart, setCart } from '../redux/Slices/CartSlice';
+import React, { useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCart } from '../context/CartContext'; // Import useCart
+import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { Container, Row, Col, Button, ListGroup, Image } from 'react-bootstrap';
 
 export default function Cart() {
-    const dispatch = useDispatch();
-    const { items, totalItems } = useSelector(state => state.cart);
-    const { Auth } = useSelector(state => state.auth);
-
-    useEffect(() => {
-        const fetchCart = async () => {
-            if (!Auth) return;
-            try {
-                const res = await fetch(`https://sowmya-app-backend.onrender.com/cart/${Auth._id}`);
-                const data = await res.json();
-                if (res.ok) {
-                    dispatch(setCart({ items: data.items }));
-                } else {
-                    toast.error(`Failed to fetch cart: ${data.msg}`);
-                }
-            } catch (error) {
-                console.error('Failed to fetch cart:', error);
-                toast.error('Failed to fetch cart.');
-            }
-        };
-        fetchCart();
-    }, [Auth, dispatch]);
-
-    const handleRemoveFromCart = async (productId) => {
-        if (!Auth) return;
-        try {
-            const res = await fetch(`https://sowmya-app-backend.onrender.com/cart/${Auth._id}/${productId}`, {
-                method: 'DELETE',
-            });
-            if (res.ok) {
-                dispatch(removeFromCart(productId));
-                toast.success('Item removed from cart.');
-            } else {
-                const data = await res.json();
-                toast.error(`Failed to remove item: ${data.msg}`);
-            }
-        } catch (error) {
-            console.error('Failed to remove from cart:', error);
-            toast.error('Failed to remove from cart.');
-        }
-    };
-
-    const handleUpdateCart = async (productId, quantity) => {
-        if (!Auth) return;
-        try {
-            const res = await fetch(`https://sowmya-app-backend.onrender.com/cart/${Auth._id}`,
-                {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ productId, quantity }),
-                }
-            );
-            if (res.ok) {
-                dispatch(updateCart({ productId, quantity }));
-                toast.success('Cart updated.');
-            } else {
-                const data = await res.json();
-                toast.error(`Failed to update cart: ${data.msg}`);
-            }
-        } catch (error) {
-            console.error('Failed to update cart:', error);
-            toast.error('Failed to update cart.');
-        }
-    };
+    const { items, totalItems, removeFromCart, updateCart, clearCart } = useCart();
+    const { Auth } = useAuth();
 
     const handleCheckout = async () => {
         if (!Auth) {
@@ -81,12 +18,12 @@ export default function Cart() {
             return;
         }
         try {
-            const res = await fetch(`https://sowmya-app-backend.onrender.com/order/checkout/${Auth._id}`, {
+            const res = await fetch(`https://sowmya-app-backnd.onrender.com/order/checkout/${Auth._id}`, {
                 method: 'POST',
             });
             const data = await res.json();
             if (res.ok) {
-                dispatch(setCart({ items: [] })); // Clear cart in Redux
+                clearCart(); // Clear cart using CartContext
                 toast.success(data.msg);
             } else {
                 toast.error(`Checkout failed: ${data.msg}`);
@@ -98,42 +35,41 @@ export default function Cart() {
     };
 
     return (
-        <div className="container mx-auto mt-10 p-5 bg-gradient-to-r from-blue-900 to-blue-400 rounded-lg shadow-lg">
-            <h1 className="text-3xl font-bold mb-5">Shopping Cart</h1>
+        <Container className="my-5">
+            <h1 className="mb-4">Shopping Cart</h1>
             {items.length === 0 ? (
                 <p>Your cart is empty.</p>
             ) : (
-                <div>
+                <ListGroup>
                     {items.map(item => (
                         item.product ? (
-                            <div key={item.product._id} className="flex items-center justify-between border-b py-4">
-                                <div className="flex items-center">
-                                    {console.log('Image URL in Cart.jsx:', item.product.imageUrl)}
-                                    <img src={item.product.imageUrl} alt={item.product.name} className="w-20 h-20 object-cover mr-4" />
+                            <ListGroup.Item key={item.product._id} className="d-flex justify-content-between align-items-center">
+                                <div className="d-flex align-items-center">
+                                    <Image src={item.product.imageUrl} thumbnail style={{ width: '80px', height: '80px', marginRight: '15px' }} />
                                     <div>
-                                        <h2 className="font-bold">{item.product.name}</h2>
+                                        <h5>{item.product.name}</h5>
                                         <p>{item.product.desc}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center">
+                                <div className="d-flex align-items-center">
                                     <input
                                         type="number"
                                         min="1"
                                         value={item.quantity}
-                                        onChange={(e) => handleUpdateCart(item.product._id, parseInt(e.target.value))}
-                                        className="w-16 text-center border rounded mr-4"
+                                        onChange={(e) => updateCart(item.product._id, parseInt(e.target.value))}
+                                        className="form-control w-25 me-3"
                                     />
-                                    <button onClick={() => handleRemoveFromCart(item.product._id)} className="btn btn-error">Remove</button>
+                                    <Button variant="danger" onClick={() => removeFromCart(item.product._id)}>Remove</Button>
                                 </div>
-                            </div>
+                            </ListGroup.Item>
                         ) : null
                     ))}
-                    <div className="mt-5 text-right">
-                        <h2 className="text-2xl font-bold">Total Items: {totalItems}</h2>
-                        <button onClick={handleCheckout} className="btn btn-primary mt-4">Checkout</button>
-                    </div>
-                </div>
+                </ListGroup>
             )}
-        </div>
+            <div className="text-end mt-3">
+                <h3>Total Items: {totalItems}</h3>
+                <Button variant="primary" onClick={handleCheckout} className="mt-2">Checkout</Button>
+            </div>
+        </Container>
     );
 }

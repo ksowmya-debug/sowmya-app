@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { setCart } from '../redux/Slices/CartSlice';
 import { Pie } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -8,37 +6,21 @@ import {
     Tooltip,
     Legend
 } from 'chart.js';
+import { useCart } from '../context/CartContext'; // Import useCart
+import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { Container, Row, Col, ListGroup, Image } from 'react-bootstrap';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function Dashboard() {
-    const dispatch = useDispatch();
-    const { items, totalItems } = useSelector(state => state.cart);
-    const { Auth } = useSelector(state => state.auth);
+    const { items, totalItems } = useCart();
+    const { Auth } = useAuth();
     const [salesData, setSalesData] = useState(null);
-
-    useEffect(() => {
-        const fetchCart = async () => {
-            if (!Auth) return;
-            try {
-                const res = await fetch(`https://sowmya-app-backend.onrender.com/cart/${Auth._id}`);
-                const data = await res.json();
-                if (res.ok) {
-                    dispatch(setCart(data));
-                } else {
-                    console.error('Failed to fetch cart:', data.msg);
-                }
-            } catch (error) {
-                console.error('Failed to fetch cart:', error);
-            }
-        };
-        fetchCart();
-    }, [Auth, dispatch]);
 
     useEffect(() => {
         const fetchSalesData = async () => {
             try {
-                const res = await fetch('https://sowmya-app-backend.onrender.com/order/sales-data');
+                const res = await fetch('https://sowmya-app-backnd.onrender.com/order/sales-data');
                 const data = await res.json();
                 if (res.ok) {
                     setSalesData(data.salesData);
@@ -88,44 +70,40 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="container mx-auto mt-10 p-5 bg-gradient-to-r from-blue-900 to-blue-400 rounded-lg shadow-lg">
-            <h1 className="text-3xl font-bold mb-5">Dashboard</h1>
-            <h2 className="text-2xl font-bold mb-3">Your Cart Items</h2>
+        <Container className="my-5">
+            <h1 className="mb-4">Dashboard</h1>
+            <h2 className="mb-3">Your Cart Items</h2>
             {items.length === 0 ? (
                 <p>Your cart is empty.</p>
             ) : (
-                <div>
+                <ListGroup>
                     {items.map(item => (
                         item.product ? (
-                            <div key={item.product._id} className="flex items-center justify-between border-b py-4">
-                                <div className="flex items-center">
-                                    {console.log('Image URL in Dashboard.jsx:', item.product.imageUrl)}
-                                    <img src={item.product.imageUrl} alt={item.product.name} className="w-20 h-20 object-cover mr-4" />
+                            <ListGroup.Item key={item.product._id} className="d-flex justify-content-between align-items-center">
+                                <div className="d-flex align-items-center">
+                                    <Image src={item.product.imageUrl} thumbnail style={{ width: '80px', height: '80px', marginRight: '15px' }} />
                                     <div>
-                                        <h2 className="font-bold">{item.product.name}</h2>
+                                        <h5>{item.product.name}</h5>
                                         <p>{item.product.desc}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center">
+                                <div className="d-flex align-items-center">
                                     <p>Quantity: {item.quantity}</p>
                                 </div>
-                            </div>
+                            </ListGroup.Item>
                         ) : null
                     ))}
-                    <div className="mt-5 text-right">
-                        <h2 className="text-2xl font-bold">Total Items in Cart: {totalItems}</h2>
-                    </div>
-                </div>
+                </ListGroup>
             )}
 
-            <h2 className="text-2xl font-bold mb-3 mt-10">Product Sales Data</h2>
+            <h2 className="mb-3 mt-5">Product Sales Data</h2>
             {salesData && salesData.length > 0 ? (
-                <div className="w-full md:w-1/2 mx-auto">
+                <div style={{ width: '50%', margin: 'auto' }}>
                     <Pie data={chartData} />
                 </div>
             ) : (
                 <p>No sales data available yet. Make some purchases!</p>
             )}
-        </div>
+        </Container>
     );
 }

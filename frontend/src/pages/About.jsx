@@ -1,26 +1,40 @@
 import React from 'react';
+import { Container, Row, Col, Image, Card } from 'react-bootstrap';
+
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-900 to-blue-400 p-8 flex flex-col items-center justify-center">
-      <div className='text-center mb-10'>
-        <h1 className='text-4xl font-bold text-gray-800'>
-          About the Owner
-        </h1>
-        <p className='text-gray-800'>Learn more about the person behind SOWMMYA-MALL.</p>
-      </div>
-
-      <div className='bg-white p-8 rounded-lg shadow-lg flex flex-col items-center'>
-        <img
-          src="/images/product10.png" // Placeholder image
-          alt="Owner"
-          className="w-48 h-48 rounded-full object-cover mb-6 border-4 border-blue-500"
-        />
-        <h2 className='text-3xl font-bold text-gray-800 mb-2'>K. Sowmya</h2>
-        <p className='text-xl text-gray-700 mb-2'>M.C.A</p>
-        <p className='text-lg text-gray-600 mb-1'>Contact No: 7386078298</p>
-        <p className='text-lg text-gray-600'>Address: Goshamahal, Hyd-12, Telangana, India</p>
-      </div>
-    </div>
+    <>
+      
+      <Container className="my-5">
+        <Row className="justify-content-center text-center">
+          <Col md={8}>
+            <Image src="https://sowmya-app-backnd.onrender.com/images/product10.png" roundedCircle fluid style={{ width: '200px', height: '200px', objectFit: 'cover' }} className="mb-4" />
+            <h1 className="mb-4">About SOM-DMART</h1>
+            <p className="lead">
+              SOM-DMART is your one-stop shop for all your daily needs. We offer a wide range of high-quality products at affordable prices. Our mission is to provide our customers with a convenient and enjoyable shopping experience.
+            </p>
+          </Col>
+        </Row>
+        <Row className="justify-content-center mt-5">
+          <Col md={6}>
+            <Card>
+              <Card.Body>
+                <Card.Title className="text-center">Director Information</Card.Title>
+                <Card.Text>
+                  <strong>Name:</strong> KATKOJWAL SOWMYA
+                  <br />
+                  <strong>Qualification:</strong> MCA
+                  <br />
+                  <strong>Phone:</strong> 7386078298
+                  <br />
+                  <strong>Email:</strong> somwya0410.k@gmail.com
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 }

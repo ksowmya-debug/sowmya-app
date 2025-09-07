@@ -64,7 +64,7 @@ const products = [
     name: "Dairy & Bakery",
     price: 100,
     desc: "Description for product 10",
-    imageUrl: "/images/product10.jpeg",
+    imageUrl: "/images/product10.png",
   },
 ];
 

@@ -2,11 +2,19 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import EditUserModal from '../Components/EditUserModal';
+import { Container, Table, Button, Modal, Form } from 'react-bootstrap';
 
 export default function UserManagement() {
     const [users, setUsers] = useState([]);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [showAddUserModal, setShowAddUserModal] = useState(false);
+    const [newUserData, setNewUserData] = useState({
+        userName: '',
+        email: '',
+        password: '',
+        isAdmin: false
+    });
 
     useEffect(() => {
         fetchUsers();
@@ -14,7 +22,7 @@ export default function UserManagement() {
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get('https://sowmya-app-backend.onrender.com/user/getAllUsers');
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/getAllUsers`);
             if (response.data.success) {
                 setUsers(response.data.users);
             } else {
@@ -29,7 +37,7 @@ export default function UserManagement() {
     const handleDelete = async (userId) => {
         if (window.confirm('Are you sure you want to delete this user?')) {
             try {
-                const response = await axios.delete(`https://sowmya-app-backend.onrender.com/users/delete/${userId}`);
+                const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/users/${userId}`);
                 if (response.data.success) {
                     toast.success(response.data.msg);
                     fetchUsers(); // Refresh the list
@@ -61,41 +69,73 @@ export default function UserManagement() {
     };
 
     const handleAddUser = () => {
-        // Placeholder for add user functionality
-        toast.info('Add new user');
-        console.log('Add new user');
+        setShowAddUserModal(true);
+    };
+
+    const handleCloseAddUserModal = () => {
+        setShowAddUserModal(false);
+        setNewUserData({
+            userName: '',
+            email: '',
+            password: '',
+            isAdmin: false
+        });
+    };
+
+    const handleNewUserChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setNewUserData(prevData => ({
+            ...prevData,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
+
+    const handleNewUserSubmit = async () => {
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, newUserData);
+            if (response.data.success) {
+                toast.success('User added successfully!');
+                fetchUsers();
+                handleCloseAddUserModal();
+            } else {
+                toast.error(response.data.msg);
+            }
+        } catch (error) {
+            console.error('Error adding user:', error);
+            toast.error('Failed to add user.');
+        }
     };
 
     return (
-        <div className="container mx-auto mt-10 p-5 bg-gray-100 rounded-lg shadow-lg">
-            <h1 className="text-3xl font-bold mb-5">User Management</h1>
-            <button onClick={handleAddUser} className="btn btn-primary mb-4">Add New User</button>
+        <Container className="my-5">
+            <h1 className="mb-4">User Management</h1>
+            <Button variant="primary" onClick={handleAddUser} className="mb-4">Add New User</Button>
             {users.length === 0 ? (
                 <p>No users found.</p>
             ) : (
-                <div className="overflow-x-auto">
-                    <table className="table w-full">
-                        <thead>
-                            <tr>
-                                <th>User Name</th>
-                                <th>Email</th>
-                                <th>Actions</th>
+                <Table striped bordered hover responsive>
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th>Email</th>
+                            <th>Admin</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map(user => (
+                            <tr key={user._id}>
+                                <td>{user.userName}</td>
+                                <td>{user.email}</td>
+                                <td>{user.isAdmin ? 'Yes' : 'No'}</td>
+                                <td>
+                                    <Button variant="info" size="sm" className="me-2" onClick={() => handleEdit(user)}>Edit</Button>
+                                    <Button variant="danger" size="sm" onClick={() => handleDelete(user._id)}>Delete</Button>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {users.map(user => (
-                                <tr key={user._id}>
-                                    <td>{user.userName}</td>
-                                    <td>{user.email}</td>
-                                    <td>
-                                        <button onClick={() => handleEdit(user)} className="btn btn-sm btn-info mr-2">Edit</button>
-                                        <button onClick={() => handleDelete(user._id)} className="btn btn-sm btn-error">Delete</button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                        ))}
+                    </tbody>
+                </Table>
             )}
 
             {showEditModal && selectedUser && (
@@ -105,6 +145,35 @@ export default function UserManagement() {
                     user={selectedUser}
                 />
             )}
-        </div>
+
+            <Modal show={showAddUserModal} onHide={handleCloseAddUserModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add New User</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3">
+                            <Form.Label>User Name</Form.Label>
+                            <Form.Control type="text" name="userName" value={newUserData.userName} onChange={handleNewUserChange} />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Email</Form.Label>
+                            <Form.Control type="email" name="email" value={newUserData.email} onChange={handleNewUserChange} />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control type="password" name="password" value={newUserData.password} onChange={handleNewUserChange} />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Check type="checkbox" label="Is Admin" name="isAdmin" checked={newUserData.isAdmin} onChange={handleNewUserChange} />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseAddUserModal}>Close</Button>
+                    <Button variant="primary" onClick={handleNewUserSubmit}>Add User</Button>
+                </Modal.Footer>
+            </Modal>
+        </Container>
     );
 }

@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import Card from '../Components/Card'
-import Navbar from '../Components/Navbar'
 import axios from 'axios'
-import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import AddModal from '../Components/AddModal'
 import EditModal from '../Components/EditModal'
+import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { useCart } from '../context/CartContext';
+import { toast } from "react-hot-toast";
+import { FaShoppingCart, FaEdit, FaEye } from 'react-icons/fa';
 
+import { Container, Row, Col, Card as BootstrapCard, Button } from 'react-bootstrap'; // Import Bootstrap components
 
 
 export default function Home() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([])
-  const { Auth } = useSelector((state) => state.auth)
+  const { Auth } = useAuth(); // Use Auth from useAuth
+  const { addToCart } = useCart();
   const [showAddModal, setShowAddModal] = useState(false); // New state for AddModal visibility
   const [showEditModal, setShowEditModal] = useState(false); // New state for EditModal visibility
   const [productToEdit, setProductToEdit] = useState(null); // State to hold the product being edited
@@ -32,7 +35,7 @@ export default function Home() {
   // Function to fetch products
   const GetProducts = async () => {
     try {
-      let url = 'https://sowmya-app-backend.onrender.com/product/getAllProducts';
+      let url = 'https://sowmya-app-backnd.onrender.com/product/getAllProducts';
       const response = await axios.get(url);
       const data = response.data;
       setProducts(data.products);
@@ -41,6 +44,20 @@ export default function Home() {
       console.log(error)
     }
   }
+
+  const handleAddToCart = async (product) => {
+    if (!Auth) {
+      toast.error("Please login to add items to cart.");
+      return;
+    }
+    try {
+      await addToCart(product, 1);
+      toast.success(`Product added to cart!`);
+    } catch (error) {
+      console.error('Failed to add to cart:', error);
+      toast.error("Failed to add to cart.");
+    }
+  };
 
   // Function to open the modal
   const handleOpenModal = () => {
@@ -66,28 +83,51 @@ export default function Home() {
 
   return (
     <>
-       <Navbar onAddProductClick={handleOpenModal}/>
-    
-      <div className='min-h-screen bg-gradient-to-r from-blue-900 to-blue-400 p-8'>
-        <div className='text-center mb-10'>
+      <Container className="my-5">
+        <div className='text-center mb-4'>
           <h1 className='text-4xl font-bold text-gray-800'>
             Welcome to our card collection!
           </h1>
           <p className='text-gray-800'>Hello🥰, Explore the different options below</p>
-          
+          <Button variant="primary" onClick={handleOpenModal}>Add Product</Button>
         </div>
-        <div className='flex flex-wrap justify-center'>
+        <Row className="justify-content-center">
           {products.length === 0 && (
-            <h1 className='text-center text-gray-500'>No products available.</h1>
+            <Col><p className='text-center text-gray-500'>No products available.</p></Col>
           )}
 
           {products.map((item) => {
-            return <Card key={item._id} product={item} onEditClick={handleOpenEditModal} />;
+            return (
+              <Col key={item._id} xs={12} sm={6} md={4} lg={3} className="mb-4">
+                <BootstrapCard>
+                  <div className="card-img-container">
+                    <BootstrapCard.Img className="product-image" variant="top" src={item.imageUrl} />
+                    <div className="card-buttons">
+                        <Button variant="primary" size="sm" onClick={() => handleAddToCart(item)}>
+                            <FaShoppingCart />
+                        </Button>
+                        <Button variant="secondary" size="sm" onClick={() => handleOpenEditModal(item)}>
+                            <FaEdit />
+                        </Button>
+                        <Link to={`/product/${item._id}`}>
+                            <Button variant="info" size="sm">
+                                <FaEye />
+                            </Button>
+                        </Link>
+                    </div>
+                  </div>
+                  <BootstrapCard.Body>
+                    <BootstrapCard.Title>{item.name}</BootstrapCard.Title>
+                    <BootstrapCard.Text>{item.desc}</BootstrapCard.Text>
+                  </BootstrapCard.Body>
+                </BootstrapCard>
+              </Col>
+            );
           })}
 
 
-        </div>
-      </div>
+        </Row>
+      </Container>
       {/* Conditionally render the AddModal */}
       {showAddModal && (
         <AddModal onClose={handleCloseModal} onProductAdded={handleProductAdded} />

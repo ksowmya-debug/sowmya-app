@@ -3,8 +3,8 @@ import Product from '../models/product.js';
 
 export const getCart = async (req, res) => {
     try {
-        const cart = await Cart.findOne({ user: req.params.userId });
-        console.log("Raw Cart (before populate):", cart); // Added for debugging
+        const cart = await Cart.findOne({ user: req.params.userId }).populate('items.product'); // Re-add populate
+        console.log("Raw Cart (before populate):", cart); // This log will now show populated data
         if (!cart) {
             return res.status(404).json({ msg: 'Cart not found' });
         }
@@ -14,6 +14,10 @@ export const getCart = async (req, res) => {
         const transformedCart = {
             ...cart._doc, // Get a plain JavaScript object of the cart
             items: cart.items.map(item => {
+                if (!item.product) { // Check if product is null after populate
+                    console.warn(`Product with ID ${item.product ? item.product._id : 'unknown'} not found for cart item.`);
+                    return null; // Filter out this item later
+                }
                 if (item.product && item.product.imageUrl) {
                     return {
                         ...item._doc, // Get a plain JavaScript object of the item
@@ -24,7 +28,7 @@ export const getCart = async (req, res) => {
                     };
                 }
                 return item._doc; // Return original item if product or imageUrl is missing
-            })
+            }).filter(item => item !== null) // Filter out null items
         };
 
         console.log("Transformed Cart:", transformedCart);
